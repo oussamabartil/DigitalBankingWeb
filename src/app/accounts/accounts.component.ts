@@ -3,6 +3,7 @@ import {FormBuilder,  FormGroup} from '@angular/forms';
 import {catchError, Observable, throwError} from "rxjs";
 import {AccountDetails} from "../model/account.model";
 import {AccountsService} from "../services/accounts.service";
+import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-accounts',
   standalone: false,
@@ -17,7 +18,7 @@ export class AccountsComponent implements OnInit {
   operationFromGroup! : FormGroup;
   errorMessage! :string ;
 
-  constructor(private fb : FormBuilder, private accountService : AccountsService) { }
+  constructor(private fb : FormBuilder, private accountService : AccountsService,private authService: AuthService) { }
 
   ngOnInit(): void {
     this.accountFormGroup=this.fb.group({

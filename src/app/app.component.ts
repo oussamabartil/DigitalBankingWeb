@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +9,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'digital-banking-web';
+  
+  constructor(private authService: AuthService) {}
+  
+  ngOnInit() {
+    // Check for existing token on app startup
+    this.authService.loadJwtTokenFromLocalStorage();
+  }
 }
