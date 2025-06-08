@@ -1,57 +1,148 @@
-<div class="container mt-2">
+<div class="customers-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="bi bi-people"></i>
+      Customer Management
+    </h1>
+    <p class="page-subtitle">Search and manage your customers</p>
+  </div>
+
   <ng-container *ngIf="customers | async as listCustomers; else failureOrLading">
-    <div class="card">
-      <div class="card-header">Customers</div>
+    <div class="card modern-card">
+      <div class="card-header">
+        <i class="bi bi-people-fill"></i>
+        Customers Directory
+      </div>
       <div class="card-body">
-        <div *ngIf="searchFormGroup">
+        <!-- Search Section -->
+        <div class="search-section" *ngIf="searchFormGroup">
           <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchCustomers()">
-            <div class="input-group">
-              <label class="input-group-text">Keyword :</label>
-              <input type="text" formControlName="keyword" class="form-control">
-              <button class="btn btn-info">
-                <i class="bi bi-search"></i>
-              </button>
+            <div class="search-container">
+              <div class="search-input-group">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  formControlName="keyword"
+                  class="form-control search-input"
+                  placeholder="Search customers by name or email...">
+                <button type="submit" class="btn btn-primary search-btn">
+                  <i class="bi bi-search"></i>
+                  Search
+                </button>
+              </div>
             </div>
           </form>
         </div>
-        <table class="table">
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let c of customers | async">
-            <td>{{c.id}}</td>
-            <td>{{c.name}}</td>
-            <td>{{c.email}}</td>
-            <td>
-              <button (click)="handleDeleteCustomer(c)" class="btn btn-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-            <td>
-              <button (click)="handleCustomerAccounts(c)" class="btn btn-success">
-                Accounts
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+
+        <!-- Results Summary -->
+        <div class="results-summary" *ngIf="listCustomers.length > 0">
+          <span class="results-count">
+            <i class="bi bi-info-circle"></i>
+            Found {{ listCustomers.length }} customer(s)
+          </span>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="table-container">
+          <table class="table modern-table">
+            <thead>
+              <tr>
+                <th>
+                  <i class="bi bi-hash"></i>
+                  ID
+                </th>
+                <th>
+                  <i class="bi bi-person"></i>
+                  Name
+                </th>
+                <th>
+                  <i class="bi bi-envelope"></i>
+                  Email
+                </th>
+                <th class="actions-column">
+                  <i class="bi bi-gear"></i>
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of listCustomers; trackBy: trackByCustomerId" class="customer-row">
+                <td class="id-cell">
+                  <span class="customer-id">#{{ c.id }}</span>
+                </td>
+                <td class="name-cell">
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <i class="bi bi-person-circle"></i>
+                    </div>
+                    <span class="customer-name">{{ c.name }}</span>
+                  </div>
+                </td>
+                <td class="email-cell">
+                  <a href="mailto:{{ c.email }}" class="email-link">
+                    {{ c.email }}
+                  </a>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <button
+                      (click)="handleCustomerAccounts(c)"
+                      class="btn btn-success action-btn"
+                      title="View Accounts">
+                      <i class="bi bi-credit-card"></i>
+                      <span class="btn-text">Accounts</span>
+                    </button>
+                    <button
+                      (click)="handleDeleteCustomer(c)"
+                      class="btn btn-danger action-btn"
+                      title="Delete Customer">
+                      <i class="bi bi-trash"></i>
+                      <span class="btn-text">Delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="listCustomers.length === 0">
+          <div class="empty-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <h3>No customers found</h3>
+          <p>Try adjusting your search criteria or add a new customer.</p>
+          <button class="btn btn-primary" routerLink="/admin/new-customer">
+            <i class="bi bi-person-plus"></i>
+            Add New Customer
+          </button>
+        </div>
       </div>
     </div>
-
   </ng-container>
+
+  <!-- Loading and Error States -->
   <ng-template #failureOrLading>
     <ng-container *ngIf="errorMessage; else loading">
-      <div  class="text-danger">
-        {{errorMessage}}
+      <div class="error-state">
+        <div class="error-icon">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h3>Something went wrong</h3>
+        <p class="error-message">{{ errorMessage }}</p>
+        <button class="btn btn-primary" (click)="handleSearchCustomers()">
+          <i class="bi bi-arrow-clockwise"></i>
+          Try Again
+        </button>
       </div>
     </ng-container>
     <ng-template #loading>
-      Loading .....
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <h3>Loading customers...</h3>
+        <p>Please wait while we fetch the customer data.</p>
+      </div>
     </ng-template>
   </ng-template>
 </div>

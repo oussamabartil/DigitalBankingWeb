@@ -7,12 +7,14 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { CustomersComponent } from './customers/customers.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NewCustomerComponent } from './new-customer/new-customer.component';
 import { CustomerAccountsComponent } from './customer-accounts/customer-accounts.component';
 import { LoginComponent } from './login/login.component';
 import { AdminTemplateComponent } from './admin-template/admin-template.component';
 import { AppHttpInterceptor } from './interceptors/app-http.interceptor';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdvancedSearchComponent } from './components/advanced-search/advanced-search.component';
 
 
 @NgModule({
@@ -24,13 +26,16 @@ import { AppHttpInterceptor } from './interceptors/app-http.interceptor';
     NewCustomerComponent,
     CustomerAccountsComponent,
     LoginComponent,
-    AdminTemplateComponent
+    AdminTemplateComponent,
+    DashboardComponent,
+    AdvancedSearchComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [
     {

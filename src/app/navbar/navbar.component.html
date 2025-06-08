@@ -1,34 +1,136 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+<nav class="modern-navbar">
+  <div class="navbar-container">
+    <!-- Brand Section -->
+    <div class="navbar-brand">
+      <i class="bi bi-bank2 brand-icon"></i>
+      <span class="brand-text">Digital Banking</span>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" type="button" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+    <!-- Navigation Menu -->
+    <div class="navbar-menu" [class.active]="isMobileMenuOpen">
+      <ul class="nav-links">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/admin/accounts">Accounts</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Customers
+          <a class="nav-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="bi bi-house"></i>
+            <span>Dashboard</span>
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="/admin/customers">Search customers</a></li>
-            <li><a class="dropdown-item" routerLink="/admin/new-customer">New customer</a></li>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/admin/accounts" routerLinkActive="active">
+            <i class="bi bi-credit-card"></i>
+            <span>Accounts</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown" [class.active]="isCustomersDropdownOpen">
+          <a class="nav-link dropdown-toggle" href="#" (click)="toggleCustomersDropdown($event)">
+            <i class="bi bi-people"></i>
+            <span>Customers</span>
+            <i class="bi bi-chevron-down dropdown-arrow" [class.rotated]="isCustomersDropdownOpen"></i>
+          </a>
+          <ul class="dropdown-menu" [class.show]="isCustomersDropdownOpen">
+            <li>
+              <a class="dropdown-item" routerLink="/admin/customers" (click)="closeMobileMenu()">
+                <i class="bi bi-search"></i>
+                Search Customers
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/admin/new-customer" (click)="closeMobileMenu()">
+                <i class="bi bi-person-plus"></i>
+                New Customer
+              </a>
+            </li>
           </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+
+      <!-- User Section -->
+      <div class="user-section">
+        <div class="user-info" *ngIf="authService.isAuthenticated">
+          <div class="user-avatar">
+            <i class="bi bi-person-circle"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ authService.username }}</span>
+            <span class="user-role">{{ authService.roles }}</span>
+          </div>
+        </div>
+
+        <div class="user-actions">
+          <!-- Theme Toggle -->
+          <button class="action-btn theme-toggle" (click)="toggleTheme()" [title]="isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+            <i class="bi" [class]="isDarkTheme ? 'bi-sun' : 'bi-moon'"></i>
+          </button>
+
+          <!-- Notifications -->
+          <div class="notifications-container">
+            <button class="action-btn notifications-btn" (click)="toggleNotifications()" title="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" [class.show]="isNotificationsOpen">
+              <div class="notifications-header">
+                <h4>Notifications</h4>
+                <div class="notifications-actions">
+                  <button class="btn-link" (click)="markAllNotificationsAsRead()" *ngIf="unreadCount > 0">
+                    Mark all as read
+                  </button>
+                  <button class="btn-link close-btn" (click)="closeNotifications()">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="notifications-list" *ngIf="notifications.length > 0; else noNotifications">
+                <div *ngFor="let notification of notifications"
+                     class="notification-item"
+                     [class]="getNotificationClass(notification.type)"
+                     [class.unread]="!notification.read"
+                     (click)="markNotificationAsRead(notification)">
+                  <div class="notification-icon">
+                    <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h5>{{ notification.title }}</h5>
+                    <p>{{ notification.message }}</p>
+                    <span class="notification-time">{{ notification.timestamp | date:'short' }}</span>
+                  </div>
+                  <button class="notification-remove" (click)="removeNotification(notification.id); $event.stopPropagation()">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+
+              <ng-template #noNotifications>
+                <div class="no-notifications">
+                  <i class="bi bi-bell-slash"></i>
+                  <p>No notifications</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <button class="action-btn" title="Settings">
+            <i class="bi bi-gear"></i>
+          </button>
+
+          <!-- Logout -->
+          <button class="logout-btn" (click)="handleLogout()" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span class="logout-text">Logout</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </nav>

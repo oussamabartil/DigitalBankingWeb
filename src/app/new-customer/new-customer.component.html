@@ -1,30 +1,116 @@
-<div class="container">
-  <div class="card col-md-6 offset-3 mt-2">
-    <div class="card-header">New Customer</div>
-    <div class="card-body">
-      <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()">
-        <div class="mb-3">
-          <label class="form-label">Name:</label>
-          <input type="text" formControlName="name" class="form-control">
-          <span class="text-danger"
-                *ngIf="newCustomerFormGroup.controls['name'].touched
-                && newCustomerFormGroup.controls['name'].errors
-                && newCustomerFormGroup.controls['name'].errors!['required']">
-            Name is Required
-          </span>
+<div class="new-customer-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="bi bi-person-plus"></i>
+      Add New Customer
+    </h1>
+    <p class="page-subtitle">Create a new customer account</p>
+  </div>
+
+  <div class="form-container">
+    <div class="card modern-form-card">
+      <div class="card-header">
+        <i class="bi bi-person-fill"></i>
+        Customer Information
+      </div>
+      <div class="card-body">
+        <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()" class="modern-form">
+          <!-- Name Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="bi bi-person"></i>
+              Full Name
+            </label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              placeholder="Enter customer's full name"
+              [class.is-invalid]="newCustomerFormGroup.controls['name'].touched && newCustomerFormGroup.controls['name'].errors">
+            <div class="invalid-feedback"
+                 *ngIf="newCustomerFormGroup.controls['name'].touched && newCustomerFormGroup.controls['name'].errors">
+              <i class="bi bi-exclamation-circle"></i>
+              <span *ngIf="newCustomerFormGroup.controls['name'].errors!['required']">
+                Full name is required
+              </span>
+            </div>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="bi bi-envelope"></i>
+              Email Address
+            </label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="Enter customer's email address"
+              [class.is-invalid]="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors">
+            <div class="invalid-feedback"
+                 *ngIf="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors">
+              <i class="bi bi-exclamation-circle"></i>
+              <span *ngIf="newCustomerFormGroup.controls['email'].errors!['required']">
+                Email address is required
+              </span>
+              <span *ngIf="newCustomerFormGroup.controls['email'].errors!['email']">
+                Please enter a valid email address
+              </span>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary cancel-btn"
+              routerLink="/admin/customers">
+              <i class="bi bi-x-circle"></i>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary save-btn"
+              [disabled]="!newCustomerFormGroup.valid || isLoading">
+              <span *ngIf="!isLoading">
+                <i class="bi bi-check-circle"></i>
+                Save Customer
+              </span>
+              <span *ngIf="isLoading" class="loading-content">
+                <span class="loading-spinner"></span>
+                Saving...
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert alert-success" role="alert">
+          <i class="bi bi-check-circle"></i>
+          {{ successMessage }}
         </div>
-        <div class="mb-3">
-          <label class="form-label">Email:</label>
-          <input type="text" formControlName="email" class="form-control">
-          <span class="text-danger"
-                *ngIf="newCustomerFormGroup.controls['email'].touched
-                && newCustomerFormGroup.controls['email'].errors
-                && newCustomerFormGroup.controls['email'].errors!['email']">
-            Email is not valid
-          </span>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle"></i>
+          {{ errorMessage }}
         </div>
-        <button [disabled]="!newCustomerFormGroup.valid" class="btn btn-info">Save</button>
-      </form>
+      </div>
+    </div>
+
+    <!-- Form Tips -->
+    <div class="form-tips">
+      <h4>
+        <i class="bi bi-lightbulb"></i>
+        Tips for adding customers
+      </h4>
+      <ul>
+        <li>Make sure the email address is unique and valid</li>
+        <li>Use the customer's full legal name</li>
+        <li>Double-check all information before saving</li>
+        <li>The customer will receive a welcome email after creation</li>
+      </ul>
     </div>
   </div>
 </div>

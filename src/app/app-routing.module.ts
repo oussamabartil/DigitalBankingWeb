@@ -6,6 +6,7 @@ import { NewCustomerComponent } from './new-customer/new-customer.component';
 import { LoginComponent } from './login/login.component';
 import { AdminTemplateComponent } from './admin-template/admin-template.component';
 import { CustomerAccountsComponent } from './customer-accounts/customer-accounts.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 
@@ -14,6 +15,14 @@ const routes: Routes = [
   { path :"", redirectTo: "/login", pathMatch:"full"},
 
   {path : "admin",component: AdminTemplateComponent,children:[
+      {
+        path : "",
+        component : DashboardComponent
+      },
+      {
+        path : "dashboard",
+        component : DashboardComponent
+      },
       {
         path : "customers",
         component : CustomersComponent
